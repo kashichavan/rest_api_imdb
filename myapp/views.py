@@ -4,6 +4,9 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import MovieSerializer
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 
 @api_view(["GET"])
@@ -11,15 +14,15 @@ def details_movies(request):
     movies=Movie.objects.all()
     res=MovieSerializer(movies,many=True)
     print(res.data)
-    return Response(data=res.data)
+    return Response(data=res.data,status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
 def detail_movie(request,id):
-    movie=Movie.objects.get(id=id)
+    movie=get_object_or_404(Movie,id=id)
     res=MovieSerializer(movie)
     print(res.data)
-    return Response(data=res.data)
+    return Response(data=res.data,status=status.HTTP_200_OK)
 
 
 
@@ -30,13 +33,38 @@ def insert_movie(request):
         s=MovieSerializer(data=request.data,many=is_list)
         if s.is_valid():
             s.save()
+            return Response(s.data,status=status.HTTP_201_CREATED)
         else:
-            print(s.data)
+            return Response(s.errors,status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(s.data)
+        
     
-    return Response({"info":"you need to insert data"})
-    
+    return Response({"info":"you need to insert data"},status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+
+@api_view(['PUT','PATCH'])
+def update_view(request,id):
+    obj=Movie.objects.get(id=id)
+    info=request.data
+    is_patch=True if request.method == "PATCH" else False
+    ser=MovieSerializer(instance=obj,data=info,partial=is_patch)
+    if ser.is_valid():
+        ser.save()
+        return Response(data=ser.data,status=status.HTTP_200_OK)
+
+    return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_view(request,id):
+    obj=get_object_or_404(Movie,id=id)
+    obj.delete()
+    return Response({"info":"object is deleteed"},status=status.HTTP_204_NO_CONTENT)
+
+
+
+
 
 
 

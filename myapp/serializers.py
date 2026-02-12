@@ -12,3 +12,14 @@ class MovieSerializer(serializers.Serializer):
         name=data.pop('name')
         obj,created=Movie.objects.get_or_create(name=name,defaults=data)
         return obj
+    
+
+    def update(self,instance,data):
+        for k,v in data.items():
+            setattr(instance,k,v)
+        
+        instance.save()
+        return instance
+    
+    
+    
