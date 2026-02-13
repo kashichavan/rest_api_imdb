@@ -1,25 +1,55 @@
 from rest_framework import serializers
 from .models import Movie
 
-class MovieSerializer(serializers.Serializer):
-    id=serializers.IntegerField(read_only=True)
-    name=serializers.CharField()
-    rating=serializers.FloatField()
-    desc=serializers.CharField()
-    
+# class MovieSerializer(serializers.Serializer):
+#     id=serializers.IntegerField(read_only=True)
+#     name=serializers.CharField()
+#     rating=serializers.FloatField()
+#     desc=serializers.CharField()
 
-    def create(self,data):
-        name=data.pop('name')
-        obj,created=Movie.objects.get_or_create(name=name,defaults=data)
-        return obj
-    
 
-    def update(self,instance,data):
-        for k,v in data.items():
-            setattr(instance,k,v)
+#     # def validate_name(self, name):
+
+#     #     if len(name)<3:
+#     #         raise serializers.ValidationError("length should be greather than 3 ")
         
-        instance.save()
-        return instance
+#     #     return name
+    
+
+#     def validate(self, attrs):
+#         name=attrs.get('name')
+#         if len(name)<3:
+#             raise serializers.ValidationError("name length should be greather than 3 ")
+        
+#         return attrs
+    
+
+#     def create(self,data):
+#         name=data.pop('name')
+#         obj,created=Movie.objects.get_or_create(name=name,defaults=data)
+#         return obj
+    
+
+#     def update(self,instance,data):
+#         for k,v in data.items():
+#             setattr(instance,k,v)
+        
+#         instance.save()
+#         return instance
     
     
+    
+
+# ModelSerializers
+
+class MovieSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Movie
+        fields='__all__'
+
+    def validate_name(self, name):
+
+        if len(name)<3:
+             raise serializers.ValidationError("length should be greather than 3 ")
+        return name
     
