@@ -17,8 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 #from myapp.views import details_movies,detail_movie,insert_movie,update_view,
-from myapp.views import MovieAPIView,MovieDetailView
-
+#from myapp.views import MovieAPIView,MovieDetailView
+from myapp.views import *
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # path('details/',details_movies),
@@ -26,7 +26,13 @@ urlpatterns = [
     # path('insert/',insert_movie),
     # path('update/<int:id>/',update_view)
 
-    path('details/',MovieAPIView.as_view(),name='details'),
-    path('detail/<int:id>',MovieDetailView.as_view(),name="detail")
+    # path('details/',MovieAPIView.as_view(),name='details'),
+    # path('detail/<int:id>',MovieDetailView.as_view(),name="detail")
+
+    #path('details/',MoviesGeneric.as_view()),
+
+    #path('get_details/',ReadMovie.as_view())
+
+    path('detail/<int:pk>/',MovieObject.as_view())
 
 ]

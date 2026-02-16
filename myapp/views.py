@@ -8,6 +8,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 
+
 # Create your views here.
 
 # @api_view(["GET"])
@@ -71,58 +72,109 @@ from rest_framework.views import APIView
 
 
 
-class MovieAPIView(APIView):
+# class MovieAPIView(APIView):
 
-    def get(self,request):
-        objs=Movie.objects.all()
-        serializ=MovieSerializer(objs,many=True)
-        return Response(serializ.data,status=status.HTTP_200_OK)
+#     def get(self,request):
+#         objs=Movie.objects.all()
+#         serializ=MovieSerializer(objs,many=True)
+#         return Response(serializ.data,status=status.HTTP_200_OK)
     
 
-    def post(self,request):
-        datas=request.data
-        des=MovieSerializer(data=datas)
-        if des.is_valid():
-            des.save()
-            return Response(des.data,status=status.HTTP_201_CREATED)
+#     def post(self,request):
+#         datas=request.data
+#         is_list=isinstance(datas,list)
+#         des=MovieSerializer(data=datas,many=is_list)
+#         if des.is_valid():
+#             des.save()
+#             return Response(des.data,status=status.HTTP_201_CREATED)
         
-        return Response(des.errors,status=status.HTTP_400_BAD_REQUEST)
+#         return Response(des.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
 
-class MovieDetailView(APIView):
+# class MovieDetailView(APIView):
 
-    def get(self,request,id):
-        obj=get_object_or_404(Movie,id=id)
-        ser=MovieSerializer(obj)
-        return Response(ser.data,status=status.HTTP_200_OK)
+#     def get(self,request,id):
+#         obj=get_object_or_404(Movie,id=id)
+#         ser=MovieSerializer(obj)
+#         return Response(ser.data,status=status.HTTP_200_OK)
 
-    def put(self,request,id):
-        obj=get_object_or_404(Movie,id=id)
-        datas=request.data
-        ser=MovieSerializer(instance=obj,data=datas)
-        if ser.is_valid():
-            ser.save()
-            return Response(ser.data,status=status.HTTP_200_OK)
+#     def put(self,request,id):
+#         obj=get_object_or_404(Movie,id=id)
+#         datas=request.data
+#         ser=MovieSerializer(instance=obj,data=datas)
+#         if ser.is_valid():
+#             ser.save()
+#             return Response(ser.data,status=status.HTTP_200_OK)
 
-        return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
+#         return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
         
 
-    def patch(self,request,id):
-        obj=get_object_or_404(Movie,id=id)
-        datas=request.data
-        ser=MovieSerializer(instance=obj,data=datas,partial=True)
-        if ser.is_valid():
-            ser.save()
-            return Response(ser.data,status=status.HTTP_200_OK)
+#     def patch(self,request,id):
+#         obj=get_object_or_404(Movie,id=id)
+#         datas=request.data
+#         ser=MovieSerializer(instance=obj,data=datas,partial=True)
+#         if ser.is_valid():
+#             ser.save()
+#             return Response(ser.data,status=status.HTTP_200_OK)
 
-        return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
+#         return Response(ser.errors,status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self,request,id):
-        obj=get_object_or_404(Movie,id=id)
-        obj.delete()
-        return Response({"object":"it has been deleted"},status=status.HTTP_204_NO_CONTENT)
+#     def delete(self,request,id):
+#         obj=get_object_or_404(Movie,id=id)
+#         obj.delete()
+#         return Response({"object":"it has been deleted"},status=status.HTTP_204_NO_CONTENT)
 
 
     
+
+# class MovieCreateAPI(GenericAPIView):
+#     serializer_class=MovieSerializer
+#     queryset=Movie.objects.all()
+
+#     def get(self,request):
+#         movies=self.get_queryset()
+#         s=self.get_serializer(movies,many=True)
+#         return Response(s.data,status=status.HTTP_200_OK)
+    
+#     def post(self,request):
+#         data=request.data
+#         s=self.get_serializer(data=data)
+#         s.is_valid(raise_exception=True)
+#         s.save()
+#         return Response(s.data,status=status.HTTP_201_CREATED)
+
+
+
+
+from rest_framework import generics
+# class MovieCreate(generics.CreateAPIView):
+#     serializer_class=MovieSerializer
+
+
+# class ReadMovie(generics.ListAPIView):
+#     queryset=Movie.objects.all()
+#     serializer_class=MovieSerializer
+
+
+class MoviesGeneric(generics.ListCreateAPIView):
+    queryset=Movie.objects.all()
+    serializer_class=MovieSerializer
+
+
+    # def get(self,request):
+    #     objs=Movie.objects.filter(rating__gt=9)
+    #     s=self.get_serializer(objs,many=True)
+    #     return Response(s.data)
+
+
+
+# class MovieObject(generics.RetrieveAPIView):
+#     queryset=Movie.objects.all()
+#     serializer_class=MovieSerializer
+
+
+class MovieObject(generics.RetrieveUpdateDestroyAPIView):
+    queryset=Movie.objects.all()
+    serializer_class=MovieSerializer
 
