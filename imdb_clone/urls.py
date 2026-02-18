@@ -15,10 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 #from myapp.views import details_movies,detail_movie,insert_movie,update_view,
 #from myapp.views import MovieAPIView,MovieDetailView
 from myapp.views import *
+
+from rest_framework import routers
+
+router=routers.DefaultRouter()
+
+router.register("detail",MovieAPi)
+
+
+
 urlpatterns = [
     # path('admin/', admin.site.urls),
     # path('details/',details_movies),
@@ -33,6 +42,10 @@ urlpatterns = [
 
     #path('get_details/',ReadMovie.as_view())
 
-    path('detail/<int:pk>/',MovieObject.as_view())
+    path("",include(router.urls))
+   
 
 ]
+
+
+

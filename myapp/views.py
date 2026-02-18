@@ -174,7 +174,67 @@ class MoviesGeneric(generics.ListCreateAPIView):
 #     serializer_class=MovieSerializer
 
 
-class MovieObject(generics.RetrieveUpdateDestroyAPIView):
-    queryset=Movie.objects.all()
-    serializer_class=MovieSerializer
+# class MovieObject(generics.RetrieveUpdateDestroyAPIView):
+#     queryset=Movie.objects.all()
+#     serializer_class=MovieSerializer
 
+
+
+    # mixins --> class 
+
+# from rest_framework  import mixins 
+
+# class MovieAPI(mixins.CreateModelMixin,generics.GenericAPIView,mixins.ListModelMixin):
+#     serializer_class=MovieSerializer
+#     queryset=Movie.objects.all()
+
+
+#     def get_serializer(self, *args, **kwargs):
+#         is_list=isinstance(self.request.data,list)
+#         if is_list:
+#             kwargs['many']=True
+#         return super().get_serializer(*args, **kwargs)
+
+#     def post(self,request,*args,**kwargs):
+#         return self.create(request,*args,**kwargs)
+    
+
+#     def get(self,request,*args,**kwargs):
+#         return self.list(request,*args,**kwargs)
+    
+
+# class MovieDetailAPI(mixins.RetrieveModelMixin,generics.GenericAPIView,
+#                      mixins.UpdateModelMixin,
+#                      mixins.DestroyModelMixin
+#                     ):
+    
+#     serializer_class=MovieSerializer
+#     queryset=Movie.objects.all()
+
+#     lookup_field='id'
+
+#     def get(self,request,*args,**kwargs):
+#         return self.retrieve(request,*args,**kwargs)
+    
+#     def put(self,request,*args,**kwargs):
+#         return self.update(request,*args,**kwargs)
+
+#     def patch(self,request,*args,**kwargs):
+#         return self.partial_update(request,*args,**kwargs) 
+
+#     def delete(self,request,*args,**kwargs):
+#         return self.destroy(request,*args,**kwargs)   
+
+from rest_framework import viewsets
+class MovieAPi(viewsets.ModelViewSet):
+    
+    serializer_class=MovieSerializer
+    queryset=Movie.objects.all()
+    lookup_field='id'
+
+
+    def get_serializer(self, *args, **kwargs):
+        is_list=isinstance(self.request.data,list)
+        if is_list:
+            kwargs['many']=True
+        return super().get_serializer(*args, **kwargs)
