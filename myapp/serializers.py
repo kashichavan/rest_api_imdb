@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movie
+# from .models import Movie
 
 # class MovieSerializer(serializers.Serializer):
 #     id=serializers.IntegerField(read_only=True)
@@ -42,14 +42,55 @@ from .models import Movie
 
 # ModelSerializers
 
-class MovieSerializer(serializers.ModelSerializer):
+# class MovieSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model=Movie
+#         fields='__all__'
+
+#     def validate_name(self, name):
+
+#         if len(name)<3:
+#              raise serializers.ValidationError("length should be greather than 3 ")
+#         return name
+    
+
+from .models import  *
+class MoviesSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Movie
+        model=Movies
         fields='__all__'
 
-    def validate_name(self, name):
 
-        if len(name)<3:
-             raise serializers.ValidationError("length should be greather than 3 ")
-        return name
-    
+class PeopleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=People
+        fields='__all__'
+        
+
+
+
+class MovieCasteSerializer(serializers.ModelSerializer):
+    movie=MoviesSerializer()
+    people=PeopleSerializer()
+
+    class Meta:
+        model=Movie_Cast
+        fields=['movie','people','character_name']
+
+
+
+class MovieCastSerializer(serializers.ModelSerializer):
+    people = PeopleSerializer(read_only=True)
+
+    class Meta:
+        model = Movie_Cast
+        fields = ['people', 'character_name']
+
+
+class MovieActorsSerializer(serializers.ModelSerializer):
+    casts=MovieCastSerializer(many=True,read_only=True)
+
+    class Meta:
+        model=Movies
+        fields=['id', 'title', 'description', 'release_date', 'casts']
+

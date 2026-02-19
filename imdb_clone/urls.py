@@ -18,18 +18,27 @@ from django.contrib import admin
 from django.urls import path,include
 #from myapp.views import details_movies,detail_movie,insert_movie,update_view,
 #from myapp.views import MovieAPIView,MovieDetailView
+# from myapp.views import *
+
+# from rest_framework import routers
+
+# router=routers.DefaultRouter()
+
+# router.register("detail",MovieAPi)
+
 from myapp.views import *
 
 from rest_framework import routers
 
 router=routers.DefaultRouter()
 
-router.register("detail",MovieAPi)
+router.register("movies",MovieCreateAPI,basename="movies")
 
+router.register("people",PeopleViewSet,basename="people")
 
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
+     path('admin/', admin.site.urls),
     # path('details/',details_movies),
     # path('details/<int:id>/',detail_movie),
     # path('insert/',insert_movie),
@@ -42,8 +51,11 @@ urlpatterns = [
 
     #path('get_details/',ReadMovie.as_view())
 
-    path("",include(router.urls))
+    # path("",include(router.urls))
    
+
+   path('api/',include(router.urls)),
+   path('api/moviecast/',get_movie_details)
 
 ]
 

@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .models import Movie
+#from .models import Movie
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import MovieSerializer
+#from .serializers import MovieSerializer
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -157,9 +157,9 @@ from rest_framework import generics
 #     serializer_class=MovieSerializer
 
 
-class MoviesGeneric(generics.ListCreateAPIView):
-    queryset=Movie.objects.all()
-    serializer_class=MovieSerializer
+# class MoviesGeneric(generics.ListCreateAPIView):
+#     queryset=Movie.objects.all()
+#     serializer_class=MovieSerializer
 
 
     # def get(self,request):
@@ -225,12 +225,38 @@ class MoviesGeneric(generics.ListCreateAPIView):
 #     def delete(self,request,*args,**kwargs):
 #         return self.destroy(request,*args,**kwargs)   
 
-from rest_framework import viewsets
-class MovieAPi(viewsets.ModelViewSet):
+# from rest_framework import viewsets
+# class MovieAPi(viewsets.ModelViewSet):
     
-    serializer_class=MovieSerializer
-    queryset=Movie.objects.all()
-    lookup_field='id'
+#     serializer_class=MovieSerializer
+#     queryset=Movie.objects.all()
+#     lookup_field='id'
+
+
+#     def get_serializer(self, *args, **kwargs):
+#         is_list=isinstance(self.request.data,list)
+#         if is_list:
+#             kwargs['many']=True
+#         return super().get_serializer(*args, **kwargs)
+
+from rest_framework import viewsets
+from .serializers import *
+from .models import *
+class MovieCreateAPI(viewsets.ModelViewSet):
+    serializer_class=MoviesSerializer
+    queryset=Movies.objects.all()
+    
+    def get_serializer(self, *args, **kwargs):
+        is_list=isinstance(self.request.data,list)
+        if is_list:
+            kwargs['many']=True
+        return super().get_serializer(*args, **kwargs)
+    
+    
+class PeopleViewSet(viewsets.ModelViewSet):
+    serializer_class=PeopleSerializer
+    queryset=People.objects.all()
+
 
 
     def get_serializer(self, *args, **kwargs):
@@ -238,3 +264,35 @@ class MovieAPi(viewsets.ModelViewSet):
         if is_list:
             kwargs['many']=True
         return super().get_serializer(*args, **kwargs)
+    
+
+# @api_view(['GET'])
+# def get_movie_details(request):
+#     movies = Movies.objects.all()
+#     result = []
+
+#     for movie in movies:
+#         casts = Movie_Cast.objects.filter(movie=movie)
+#         people = [cast.people for cast in casts]
+
+#         data = {
+#             "id": movie.id,
+#             "title": movie.title,
+#             "description": movie.description,
+#             "release_date": movie.release_date,
+#             "people": people
+#         }
+
+#         serializer = MovieActors(data)
+#         result.append(serializer.data)
+
+#     return Response(result)
+
+
+
+
+@api_view(['GET'])
+def get_movie_details(request):
+    movies = Movies.objects.prefetch_related('casts__people')
+    serializer = MovieActorsSerializer(movies, many=True)
+    return Response(serializer.data)
